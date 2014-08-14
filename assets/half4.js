@@ -9,6 +9,7 @@ var globalScale = 30.0;
 var gravity = 0;
 
 var squareSize = 5;
+var squareSizeBig = 12;
 
 
 var test = null;
@@ -76,7 +77,7 @@ function init() {
     bodyDef.userData = {
       'width': sx * 2,
       'height': sy * 2
-    }
+    };
     fixDef.shape = new b2PolygonShape;
     fixDef.shape.SetAsBox(sx, sy);
     var body = world.CreateBody(bodyDef).CreateFixture(fixDef);
@@ -93,34 +94,15 @@ function init() {
       squareSize / globalScale //half width
       , squareSize / globalScale //half height
     );
-    //bodyDef.linearDamping = 0.0;
-    //bodyDef.angularDamping = 0.01;
+    bodyDef.userData = {
+      'color' : '#00e8a9',
+      'shape' : 'rect'
+    };
 
     bodyDef.position.x = (getPosition(littleSquares[i]).x + 5) / globalScale;
     bodyDef.position.y = (getPosition(littleSquares[i]).y + 5) / globalScale;
     world.CreateBody(bodyDef).CreateFixture(fixDef);
   }
-
-  /*
-   //create the four dots
-   bodyDef.type = b2Body.b2_dynamicBody;
-   for (var i = 0; i < 4; ++i) {
-         fixDef.shape = new b2PolygonShape;
-         fixDef.shape.SetAsBox(
-            squareSize/globalScale //half width
-            ,squareSize/globalScale  //half height
-         );
-      //bodyDef.linearDamping = 0.0;
-      //bodyDef.angularDamping = 0.01;
-   
-      bodyDef.position.x = Math.random() * canvas.width/globalScale;
-      bodyDef.position.y = Math.random() * canvas.height/globalScale;
-      world.CreateBody(bodyDef).CreateFixture(fixDef);
-   }
-
-
-*/
-
 
   //setup debug draw
   var debugDraw = new b2DebugDraw();
@@ -144,11 +126,12 @@ function init() {
   document.addEventListener("mousedown", function(e) {
     isMouseDown = true;
     handleMouseMove(e);
-    document.addEventListener("mousemove", handleMouseMove, true);
   }, true);
 
+ document.addEventListener("mousemove", handleMouseMove, true);
+
+
   document.addEventListener("mouseup", function() {
-    document.removeEventListener("mousemove", handleMouseMove, true);
     isMouseDown = false;
     mouseX = undefined;
     mouseY = undefined;
@@ -183,8 +166,21 @@ function init() {
   }
 
   //update
+var newShape = false;
 
   function update() {
+
+
+
+
+
+  /* Shape Creation */
+  if(isMouseDown && !newShape) {
+    createNewShape('strokeRect');
+    newShape = true;
+  } else if(!isMouseDown) {
+    newShape = false
+  }
 
     if (isMouseDown && (!mouseJoint)) {
       var body = getBodyAtMouse();
@@ -210,6 +206,10 @@ function init() {
     }
 
 
+
+
+
+
     world.Step(
       1 / 60 //frame-rate
       , 100 //velocity iterations
@@ -218,23 +218,28 @@ function init() {
 
 
 
-    function useCanvas() {
+    function updateCanvas() {
       var bodies = world.GetBodyList();
       var bodyCount = world.GetBodyCount();
 
       canvas.width = canvas.width;
       context.save();
-      // context.lineWidth = 0.06;
-
+      context.lineWidth = 1/(globalScale/2);
+      context.strokeStyle = "#ffffff";
       context.setTransform(globalScale, 0, 0, globalScale, 0, 0);
 
-      /*
-          // shape bound to mouse
-            context.save();
-            context.translate(mouseX2,mouseY2);
-            context.strokeRect((-10 / 2) * 2, (-10 / 2) / 2, 10 * 2, (10 / 2));
-            context.restore();
-                      */
+    
+     // Mouse Rect
+       if(!newShape) {
+          context.save();
+          context.translate(mouseX,mouseY);
+          context.rotate(45*Math.PI/180);
+          //context.arc(0, 0, squareSizeBig * 2 / globalScale,0,2*Math.PI);
+          context.stroke();
+          context.strokeRect(0 - (squareSizeBig / globalScale), 0 - (squareSizeBig / globalScale), squareSizeBig * 2 / globalScale, squareSizeBig * 2 / globalScale);
+          context.restore();
+      }
+                 
 
       // elem list
       for (var i = 0; i < bodyCount; i++) {
@@ -246,13 +251,19 @@ function init() {
           context.save();
           context.translate(position.x, position.y);
           context.rotate(bodies.GetAngle());
-          context.fillStyle = '#00e8a9';
+          context.fillStyle = body.color;
 
           context.beginPath();
           /*context.moveTo(0-(squareSize/globalScale),0-(squareSize/globalScale));
               context.lineTo(squareSize/globalScale,squareSize/globalScale);*/
-          context.rect(0 - (squareSize / globalScale), 0 - (squareSize / globalScale), squareSize * 2 / globalScale, squareSize * 2 / globalScale);
-          context.fill();
+              if(body.shape == 'rect') {
+                  context.rect(0 - (squareSize / globalScale), 0 - (squareSize / globalScale), squareSize * 2 / globalScale, squareSize * 2 / globalScale);
+                  context.fill();
+             } else if(body.shape == 'strokeRect') {
+                context.strokeRect(0 - (squareSizeBig / globalScale), 0 - (squareSizeBig / globalScale), squareSizeBig * 2 / globalScale, squareSizeBig * 2 / globalScale);
+                //add tiny movment
+                bodies.ApplyImpulse(new b2Vec2(randomFromTo(-0.01, 0.01),randomFromTo(-0.01, 0.01)), bodies.GetWorldCenter());
+             }
           context.closePath();
 
           context.restore();
@@ -273,15 +284,38 @@ function init() {
     }
 
     //world.DrawDebugData(); 
-    useCanvas();
+    updateCanvas();
     world.ClearForces();
+
+
+
+
+    function createNewShape(type) {
+
+      bodyDef.type = b2Body.b2_dynamicBody;
+        fixDef.shape = new b2PolygonShape;
+        fixDef.shape.SetAsBox(
+          squareSizeBig / globalScale //half width
+          , squareSizeBig / globalScale //half height
+        );
+          bodyDef.userData = {
+            'color' : '#ffffff',
+            'shape' : type
+          };
+        bodyDef.position.x = mouseX;
+        bodyDef.position.y =  mouseY;
+        bodyDef.angle = 45*Math.PI/180; 
+        world.CreateBody(bodyDef).CreateFixture(fixDef);
+
+        return bodyDef;
+    }
+
   };
 
 
 
-  //helpers
-  //
-  //
+/* ------------------------------------------- */
+
 
   //http://js-tut.aardon.de/js-tut/tutorial/position.html
   function getElementPosition(element) {
