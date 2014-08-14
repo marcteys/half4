@@ -62,6 +62,8 @@ function init() {
 
   for (var i = 0; i < 4; ++i) {
     createNewShape((getPosition(littleSquares[i]).x + 5) / globalScale, (getPosition(littleSquares[i]).y + 5) / globalScale, squareSize, 0, 'rect', '#00e8a9');
+    // change style , add the invisible class!
+    littleSquares[i].className += " hidden";
   }
 
 

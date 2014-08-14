@@ -118,6 +118,13 @@ canvas {
 	position: absolute;
 	background: white;
 	opacity: .2;
+	background: #00e8a9;
+	opacity: 1;
+}
+
+.square.hidden {
+	background: white;
+	opacity: .2;
 }
 
 .s1 {
