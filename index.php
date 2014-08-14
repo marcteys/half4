@@ -6,6 +6,8 @@
 
 	<link rel="stylesheet" href="assets/css/reset.css" />
 	<link rel="stylesheet" href="assets/css/style.css" />
+	<link rel="shortcut icon" href="/favicon.ico" />
+
 	<script type="text/javascript" src="assets/lib/Box2dWeb.min.js"></script>
 	<script type="text/javascript" src="assets/half4.js"></script>
 	
