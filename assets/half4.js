@@ -102,8 +102,6 @@ function init() {
 
   document.addEventListener("mouseup", function() {
     isMouseDown = false;
-    mouseX = undefined;
-    mouseY = undefined;
   }, true);
 
   function handleMouseMove(e) {
