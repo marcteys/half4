@@ -13,6 +13,8 @@ var squareSizeBig = 12;
 var test = null;
 var s1 = null;
 
+var greenColor = "#00e8a9";
+
 
 function resize() {
   canvas.width = canvas.offsetWidth;
@@ -61,7 +63,7 @@ function init() {
 
 
   for (var i = 0; i < 4; ++i) {
-    createNewShape((getPosition(littleSquares[i]).x + 5) / globalScale, (getPosition(littleSquares[i]).y + 5) / globalScale, squareSize, 0, 'rect', '#00e8a9');
+    createNewShape((getPosition(littleSquares[i]).x + 5) / globalScale, (getPosition(littleSquares[i]).y + 5) / globalScale, squareSize, 0, 'rect', greenColor,true);
     // change style , add the invisible class!
     littleSquares[i].className += " hidden";
   }
@@ -103,6 +105,32 @@ function init() {
   document.addEventListener("mouseup", function() {
     isMouseDown = false;
   }, true);
+
+
+  //contact listener
+  var contactListener = new Box2D.Dynamics.b2ContactListener;
+
+  world.SetContactListener(contactListener);
+
+  contactListener.BeginContact = function(contact) {
+    var isMainA = contact.GetFixtureA().GetBody().GetUserData().isMain;
+    var isMainB = contact.GetFixtureB().GetBody().GetUserData().isMain;
+
+    if(isMainA || isMainB){
+     // isMainA ? contact.GetFixtureB().GetBody().SetColor(greenColor) : contact.GetFixtureA().GetBody().SetColor(greenColor);
+    }
+  
+  }
+  contactListener.EndContact = function(contact) {
+       //console.log(contact.GetFixtureA().GetBody().GetUserData());
+  }
+  contactListener.PostSolve = function(contact, impulse) {
+      
+  }
+  contactListener.PreSolve = function(contact, oldManifold) {
+
+  }
+
 
   function handleMouseMove(e) {
     mouseX = (e.clientX - canvasPosition.x) / globalScale;
@@ -157,9 +185,8 @@ function init() {
       canvas.width = canvas.width;
       context.save();
       context.lineWidth = 1 / (globalScale / 2);
-      context.strokeStyle = "#ffffff";
       context.setTransform(globalScale, 0, 0, globalScale, 0, 0);
-
+      context.strokeStyle = '#ffffff';
 
       // Mouse Rect
       if (!newShape) {
@@ -184,6 +211,7 @@ function init() {
           context.translate(position.x, position.y);
           context.rotate(bodies.GetAngle());
           context.fillStyle = body.color;
+          context.strokeStyle = body.color;
 
           context.beginPath();
           /*context.moveTo(0-(squareSize/globalScale),0-(squareSize/globalScale));
@@ -192,6 +220,7 @@ function init() {
             context.rect(0 - (squareSize / globalScale), 0 - (squareSize / globalScale), squareSize * 2 / globalScale, squareSize * 2 / globalScale);
             context.fill();
           } else if (body.shape == 'strokeRect') {
+
             context.strokeRect(0 - (squareSizeBig / globalScale), 0 - (squareSizeBig / globalScale), squareSizeBig * 2 / globalScale, squareSizeBig * 2 / globalScale);
             //add tiny movment
             bodies.ApplyImpulse(new b2Vec2(randomFromTo(-0.01, 0.01), randomFromTo(-0.01, 0.01)), bodies.GetWorldCenter());
@@ -244,7 +273,9 @@ function init() {
   }
 
 
-  function createNewShape(posX, posY, scale, rotation, type, color) {
+  function createNewShape(posX, posY, scale, rotation, type, color,isMain) {
+
+    isMain = typeof isMain !== 'undefined' ? isMain : false;
 
     bodyDef.type = b2Body.b2_dynamicBody;
     fixDef.shape = new b2PolygonShape;
@@ -254,15 +285,24 @@ function init() {
     );
     bodyDef.userData = {
       'color': color,
-      'shape': type
+      'shape': type,
+      'isMain' : isMain
     };
     bodyDef.position.x = posX;
     bodyDef.position.y = posY;
     bodyDef.angle = rotation * Math.PI / 180;
     world.CreateBody(bodyDef).CreateFixture(fixDef);
 
+
+
     return bodyDef;
   }
+
+    //Extrend body
+
+    b2Body.prototype.SetColor =  function(col) {
+      this.m_userData.color = col;
+    };
 
 
   var newShape = false;
