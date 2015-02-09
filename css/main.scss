@@ -143,6 +143,12 @@ canvas {
   }
 }
 
+.preload {
+  overflow:hidden;
+  position: absolute;
+  bottom: -100%;
+  opacity: 0;
+}
 
 .gallery-bloc {
   height: 100%;
@@ -192,6 +198,12 @@ canvas {
       display: table-cell;
       pointer-events: none;
       left:3%;
+          -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 
       h3 {
         font-size: 48px;
