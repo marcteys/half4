@@ -1,0 +1,8 @@
+{
+  "name": "phase2",
+  "version": "0.1.0",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-manifest": "~0.4.0"
+  }
+}
