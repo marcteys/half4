@@ -1,5 +1,6 @@
 
 $dark : #343434;
+$bg : #1a1a1a;
 $green : #00e8a9;
 
 body,html {
@@ -12,10 +13,21 @@ body,html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   font-family: 'Source Sans Pro', sans-serif; 
+  background-color: $bg;
   background-color: $dark;
   color: white;
+
 }
 
+h1 {
+  opacity: 0;
+  height:50px;
+  width: 50px;
+  text-indent: -9999px;
+  position: absolute;
+  top: -100%;
+  left: -100%;
+}
 .pt-page-0 {
   background-color:#aaa;
   height:100%;
@@ -43,10 +55,40 @@ body,html {
   overflow-y:hidden;
   -webkit-transition:     -webkit-transform .25s ease-out;
   -webkit-transform:      translate3d(0,0,0);
-  border: 30px solid white;
+ /* background-color: $dark;*/
+    border: 30px solid white;
+
+}
+
+.pt-page {
+   background-color: $dark;
+  overflow : hidden;
 }
 
 
+nav {
+  position:absolute;
+  top: 40px;
+  right: 50px;
+  width: 40px;
+  height: 40px;
+  z-index:5;
+  background: url(../img/arrow.png) no-repeat center center;
+  overflow: hidden; 
+  opacity: 1;
+  transition: opacity 0.3s;
+
+    &.out {
+      opacity: 0;
+    }
+
+  a {
+    text-indent: -9999px;
+    display: block;
+    height: 100%;
+    width:100%;
+  }
+}
 canvas {
   overflow: hidden;
   display: block;
@@ -68,9 +110,8 @@ canvas {
   font-weight: 600;
   font-size: 48px;
   height:300px;
-  top: 50%;
+  top: 30%;
   margin: 0 auto;
-  margin-top: -150px;
   position: absolute;
   left: 50%;
   margin-left: -330px;
@@ -79,6 +120,12 @@ canvas {
   p {
       font-size: 48px;
         pointer-events: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 
     span {
       color: $green;
@@ -91,8 +138,71 @@ canvas {
       text-decoration: none;
       border-bottom:solid 3px white;
       padding-bottom: 0px;
-        pointer-events: visible;
+      pointer-events: visible;
+    }
+  }
+}
 
+
+.gallery-bloc {
+  height: 100%;
+  width: 100%;
+  .one-elem {
+   height: 25%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    display: table;
+    .bg {
+      opacity: .2;
+      background-position: center center;
+      background-repeat: no-repeat;
+      height: 100%;
+      width: 100%;
+      background-size:cover;
+      position: absolute;
+     -moz-transition: all .5s ease-out;
+      -webkit-transition: all .5s ease-out;
+      transition: all .5s ease-out;
+      -moz-transform: scale(1,1);
+      -webkit-transform: scale(1,1);
+      transform: scale(1,1);
+      -moz-background-size: cover;
+      -webkit-background-size: cover;
+      background-size: cover;
+      z-index: -1;
+
+    }
+   &:hover {
+      .bg {
+        -moz-transform: scale(1.1,1.1);
+        -webkit-transform: scale(1.1,1.1);
+        transform: scale(1.1,1.1);    
+        opacity: .4;
+      }
+    }
+
+    .text {
+      position: relative;
+      height: 100px;
+      vertical-align:middle;
+      display:inline-block;
+      line-height:normal; /* on rétablit le line-height */
+      text-align:left; /* ... et l'alignement du texte */
+      display: table-cell;
+      pointer-events: none;
+      left:3%;
+
+      h3 {
+        font-size: 48px;
+        font-weight: 600;
+        margin: 0;
+      }
+      p{
+        font-size: 16px;
+        font-weight: 400;
+        margin: 0;
+      }
     }
   }
 }
@@ -103,4 +213,5 @@ canvas {
 
 * {
   overflow: hidden !important;
+
 }

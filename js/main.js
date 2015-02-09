@@ -6,7 +6,10 @@ var AppRouter = Backbone.Router.extend({
         "": "home",
         "home": "home",
         "about(/)": "about",
-        "interactive(/)": "interactive"
+        "interactive(/)": "interactive",
+        "web(/)": "web",
+        "games(/)": "games",
+        "etc(/)": "etc",
     },
 
     initialize: function() {
@@ -17,6 +20,13 @@ var AppRouter = Backbone.Router.extend({
         this.firstPage = true;
         this.appModel = new AppModel();
 
+        // create nav and append
+        this.nav = new NavPage({
+            model: this.appModel
+        });
+        this.nav.render();
+        $("body").append($(this.nav.el));
+
         this.history = this.appModel.hist.history;
     },
 
@@ -25,6 +35,7 @@ var AppRouter = Backbone.Router.extend({
         this.changePage(new HomePage({
             model: this.appModel
         }));
+        
         this.pageName = "home";
     },
 
@@ -38,10 +49,34 @@ var AppRouter = Backbone.Router.extend({
     interactive: function(id) {
         console.log("ROUTE HIT: interactive");
         //var item = new Item({id:id});
-        this.changePage(new InteractivePage({}));
+        //this.changePage(new InteractivePage({}),"pt-page-moveToLeft" , "pt-page-scaleUp");
+        this.changePage(new InteractivePage({}),"pt-page-moveToLeftFade" , "pt-page-moveFromRightFade");
         this.pageName = "iteractive";
     },
 
+    web: function(id) {
+        console.log("ROUTE HIT: web");
+        //var item = new Item({id:id});
+        //this.changePage(new InteractivePage({}),"pt-page-moveToLeft" , "pt-page-scaleUp");
+        this.changePage(new WebPage({}),"pt-page-moveToLeftFade" , "pt-page-moveFromRightFade");
+        this.pageName = "web";
+    },
+
+    games: function(id) {
+        console.log("ROUTE HIT: games");
+        //var item = new Item({id:id});
+        //this.changePage(new InteractivePage({}),"pt-page-moveToLeft" , "pt-page-scaleUp");
+        this.changePage(new GamePage({}),"pt-page-moveToLeftFade" , "pt-page-moveFromRightFade");
+        this.pageName = "games";
+    },
+
+    etc: function(id) {
+        console.log("ROUTE HIT: etc");
+        //var item = new Item({id:id});
+        //this.changePage(new InteractivePage({}),"pt-page-moveToLeft" , "pt-page-scaleUp");
+        this.changePage(new EtcPage({}),"pt-page-moveToLeftFade" , "pt-page-moveFromRightFade");
+        this.pageName = "etc";
+    },
 
     changePage: function(page, outClass, inClass) {
 
@@ -53,8 +88,8 @@ var AppRouter = Backbone.Router.extend({
 
             if (Backbone.history.fragment == this.history[this.history.length - 2]) {
                 this.history.pop();
-                outClass = 'pt-page-moveToRight pt-page-ontop';
-                inClass = 'pt-page-moveFromLeft';
+                outClass = 'pt-page-moveToRightFade pt-page-ontop';
+                inClass = 'pt-page-moveFromLeftFade';
                 console.log('previous');
             } else {
                 if (Backbone.history.fragment == '') Backbone.history.fragment = 'home';
@@ -199,7 +234,11 @@ $(document).ready(function() {
     tpl.loadTemplates([
             'home',
             'about',
-            'interactive'
+            'nav',
+            'interactive',
+            'etc',
+            'games',
+            'web',
         ],
         function() {
         	setTimeout(function() {

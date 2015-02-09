@@ -1,7 +1,6 @@
 window.InteractivePage = Page.extend({
 
 	events: {
-      
      },
 
     initialize:function () {
@@ -18,6 +17,5 @@ window.InteractivePage = Page.extend({
 
     	return this;
     }
-
 
 });
